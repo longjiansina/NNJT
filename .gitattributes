@@ -1,0 +1,7 @@
+# 语言统计规则
+# 测试脚本与文档不计入仓库语言占比。
+# 不加这条，24 个 Python 测试脚本的行数会盖过 Rust 与 JavaScript，
+# 仓库主语言会被识别成 Python（一个 Tauri 播放器显示 Python 很误导）。
+scripts/** -linguist-detectable
+docs/** -linguist-detectable
+*.bat -linguist-detectable

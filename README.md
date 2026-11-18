@@ -66,7 +66,7 @@
 
 ### 直接用
 
-到 [**Releases**](https://github.com/longjiansina/NNJT/releases/latest) 下载 `宁宁静听 v0.14.0.exe`，双击即运行。单文件绿色版，无需安装、无需额外运行库。
+到 [**Releases**](https://github.com/longjiansina/NNJT/releases/latest) 下载 `v0.14.0.exe`（4.4 MB），双击即运行。单文件绿色版，无需安装、无需额外运行库，改名放哪都能用。
 
 > 首次启动 Windows 可能提示「Windows 已保护你的电脑」（exe 未做代码签名），点「更多信息 → 仍要运行」即可。
 > 极少数未装 WebView2 的旧版 Win10 需先安装 [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)。
