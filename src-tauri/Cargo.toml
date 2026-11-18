@@ -1,0 +1,41 @@
+[package]
+name = "ttplayer"
+version = "0.14.0"
+description = "宁宁静听 - 轻量本地音乐播放器"
+authors = ["you"]
+edition = "2021"
+
+[lib]
+name = "ttplayer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+# 打包版必须开：tauri 靠这个 feature 判断「用内嵌资源还是 devUrl」。
+# 直接用 cargo build 而不带它，产物会去连 http://localhost:1420 变成白屏。
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+symphonia = { version = "0.6.1", default-features = false, features = ["mp3", "flac", "wav", "ogg", "vorbis", "aac", "isomp4", "pcm", "id3v1", "id3v2", "ape"] }
+tauri-plugin-single-instance = "2.5.5"
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.62", features = [
+    "Win32_Foundation",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_WindowsAndMessaging",
+] }
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

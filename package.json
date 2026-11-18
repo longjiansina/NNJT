@@ -1,0 +1,17 @@
+{
+  "name": "ttplayer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "千千静听复刻版 - 轻量本地音乐播放器 (Tauri)",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "build:exe": "cargo build --release --manifest-path src-tauri/Cargo.toml --features custom-protocol"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0"
+  }
+}

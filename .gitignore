@@ -1,0 +1,29 @@
+# ---- 依赖与构建产物 ----
+node_modules/
+src-tauri/target/
+src-tauri/gen/
+
+# ---- 本地运行状态（个人歌单、窗口布局，不进仓库）----
+.userstate/
+
+# ---- 分发的可执行文件 ----
+share/
+*.exe
+
+# ---- 设计过程素材与历史截图（保留在本地，不入库）----
+_archive/
+mockup/
+
+# ---- Python 测试临时产物 ----
+__pycache__/
+*.pyc
+scripts/*.log
+scripts/lyric-report*.json
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini

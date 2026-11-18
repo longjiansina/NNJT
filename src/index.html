@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>宁宁静听</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-w="main">
+  <div id="app" data-skin="retro">
+
+    <!-- ==================== 主控制窗口 ==================== -->
+    <section class="pane" data-pane="main">
+      <div class="win-title" data-drag>
+        <button class="t-open" id="btn-open" title="添加文件或文件夹（MP3 / FLAC / WAV）">
+          <svg viewBox="0 0 14 14">
+            <path d="M1.2 3.4h4l1.1 1.4h6.5v6.4H1.2z" fill="currentColor" opacity=".85"/>
+            <path d="M1.2 3.4h4l1.1 1.4h6.5" fill="none" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </button>
+        <span class="t-name">宁宁静听</span>
+        <span class="sysbtns">
+          <button class="sysbtn" id="btn-about" title="关于 宁宁静听">
+            <svg viewBox="0 0 12 12">
+              <circle cx="6" cy="6" r="4.55" fill="none" stroke="currentColor" stroke-width="1.05"/>
+              <circle cx="6" cy="3.72" r=".74" fill="currentColor"/>
+              <path d="M6 5.45v3.05" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="sysbtn" id="btn-skin-menu" title="选择皮肤">
+            <svg viewBox="0 0 12 12">
+              <path d="M6 1.3a4.7 4.7 0 100 9.4c.8 0 1.2-.5 1.2-1.1 0-.4-.2-.7-.2-1.1 0-.5.4-.9.9-.9h.9c1 0 1.9-.8 1.9-1.9C10.7 3.4 8.6 1.3 6 1.3z" fill="none" stroke="currentColor" stroke-width="1.05"/>
+              <circle cx="4.2" cy="4.5" r=".8" fill="currentColor"/>
+              <circle cx="7.3" cy="3.9" r=".8" fill="currentColor"/>
+              <circle cx="3.7" cy="7.1" r=".8" fill="currentColor"/>
+            </svg>
+          </button>
+          <button class="sysbtn" id="btn-pin" title="窗口置顶">
+            <svg viewBox="0 0 12 12">
+              <circle cx="6" cy="4.1" r="2.3" fill="none" stroke="currentColor" stroke-width="1.15"/>
+              <path d="M6 6.4v4.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="sysbtn" id="btn-min" title="最小化">_</button>
+          <button class="sysbtn close" id="btn-close" title="关闭">&#10005;</button>
+        </span>
+      </div>
+
+      <div class="main-body">
+        <canvas class="osc-bg" id="osc-bg" title="点击空白处切回频谱"></canvas>
+
+        <!-- 左：可视化屏（频谱 / 示波波形，点一下轮换） -->
+        <div class="screen" id="screen" title="点击切换：频谱 / 波形 / 铺满背景">
+          <canvas id="spec-cv"></canvas>
+          <span class="spec-tag" id="spec-tag">SPECTRUM</span>
+          <div class="spec-glass"></div>
+        </div>
+
+        <!-- 右：信息与操作 -->
+        <div class="side">
+          <div class="line1">
+            <span class="song" id="info-title">宁宁静听</span>
+            <span class="tbig" id="time-cur">00:00</span>
+          </div>
+          <div class="stline">
+            <span id="stat-state">状态: 停止</span>
+            <span class="sp">&middot;</span>
+            <span id="stat-meta"></span>
+            <i class="st-prog" id="st-prog"></i>
+          </div>
+          <div class="seek2">
+            <div class="seek-track" id="seek-track">
+              <div class="seek-fill" id="seek-fill"></div>
+              <div class="seek-knob" id="seek-knob"></div>
+            </div>
+          </div>
+          <div class="metal">
+            <span id="info-album"></span>
+            <span class="sp">|</span>
+            <span id="info-idx"></span>
+            <span class="sp">|</span>
+            <span id="time-total">00:00</span>
+          </div>
+          <div class="spacer"></div>
+          <div class="pkeys">
+            <button class="rbtn" id="btn-prev" title="上一首">
+              <svg viewBox="0 0 12 12"><rect x="1.8" y="2" width="1.7" height="8" fill="currentColor"/><path d="M10 2v8L4 6z" fill="currentColor"/></svg>
+            </button>
+            <button class="rbtn play" id="btn-play" title="播放 / 暂停">
+              <svg viewBox="0 0 12 12" id="ico-play"><path d="M3 2l7 4-7 4z" fill="currentColor"/></svg>
+            </button>
+            <button class="rbtn" id="btn-stop" title="停止">
+              <svg viewBox="0 0 12 12"><rect x="2.6" y="2.6" width="6.8" height="6.8" fill="currentColor"/></svg>
+            </button>
+            <button class="rbtn" id="btn-next" title="下一首">
+              <svg viewBox="0 0 12 12"><path d="M2 2v8l6-4z" fill="currentColor"/><rect x="8.5" y="2" width="1.7" height="8" fill="currentColor"/></svg>
+            </button>
+
+            <span class="vol-box">
+              <span class="vol-ico" id="btn-mute" title="静音">
+                <svg viewBox="0 0 12 12"><path d="M1.6 4.4h2L6 2v8L3.6 7.6h-2z" fill="currentColor"/><path d="M7.6 4.2a3.2 3.2 0 010 3.6" stroke="currentColor" fill="none" stroke-width="1.1" stroke-linecap="round"/><path d="M9.3 2.9a5.3 5.3 0 010 6.2" stroke="currentColor" fill="none" stroke-width="1.1" stroke-linecap="round"/></svg>
+              </span>
+              <span class="vol-track" id="vol-track">
+                <span class="vol-fill" id="vol-fill"></span>
+                <span class="vol-knob" id="vol-knob"></span>
+              </span>
+            </span>
+          </div>
+          <div class="caps">
+            <button class="cap on" data-panel="playlist" title="播放列表">FL</button>
+            <button class="cap" data-panel="eq" title="均衡器">EQ</button>
+            <button class="cap" data-panel="lyric" title="歌词">LRC</button>
+          </div>
+        </div>
+
+        <div class="openmenu skins" id="skin-menu" hidden></div>
+
+        <div class="openmenu" id="openmenu" hidden>
+          <button class="om-item" data-act="files">添加文件…</button>
+          <button class="om-item" data-act="folder">添加文件夹…</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 播放列表窗口 ==================== -->
+    <section class="pane" data-pane="playlist">
+      <div class="win-title" data-drag>
+        <span class="t-icon small"></span>
+        <span class="t-name">播放列表</span>
+        <span class="sysbtns">
+          <button class="sysbtn close" id="pl-close" title="关闭">&#10005;</button>
+        </span>
+      </div>
+      <div class="menubar">
+        <button id="btn-add">添加</button>
+        <button id="btn-remove">删除</button>
+        <button id="btn-sort">排序</button>
+        <button id="btn-find">查找</button>
+        <button id="btn-clear">清空</button>
+        <span class="modebox">
+          <button id="btn-mode" title="播放模式"><span id="mode-label">顺序</span><i class="car">▾</i></button>
+          <div class="openmenu modemenu" id="mode-menu" hidden>
+            <button class="om-item" data-m="0">顺序播放</button>
+            <button class="om-item" data-m="1">列表循环</button>
+            <button class="om-item" data-m="2">随机播放</button>
+            <button class="om-item" data-m="3">单曲循环</button>
+          </div>
+        </span>
+        <button id="btn-export" title="把当前这首解码成 16bit WAV（原始音质，不含均衡器）">导出</button>
+        <span class="spacer"></span>
+        <span class="count" id="list-count">0 首</span>
+        <div class="openmenu in-bar" id="pl-openmenu" hidden>
+          <button class="om-item" data-act="files">添加文件…</button>
+          <button class="om-item" data-act="folder">添加文件夹…</button>
+        </div>
+      </div>
+      <div class="scanbar" id="scanbar" hidden>
+        <span class="sb-text" id="sb-text">正在扫描…</span>
+        <div class="sb-track"><div class="sb-fill" id="sb-fill"></div></div>
+        <span class="sb-num" id="sb-num"></span>
+      </div>
+      <div class="findbar" id="findbar" hidden>
+        <input id="find-input" type="text" placeholder="查找歌名…" spellcheck="false" />
+        <span class="find-num" id="find-num">0 / 0</span>
+        <button class="find-btn" id="find-prev" title="上一个（Shift+Enter）">&#9650;</button>
+        <button class="find-btn" id="find-next" title="下一个（Enter）">&#9660;</button>
+        <button class="find-btn close" id="find-close" title="关闭查找">&#10005;</button>
+      </div>
+      <div class="list-body">
+        <div class="pl-side">
+          <div class="side-head">列表</div>
+          <ul class="pl-lists" id="pl-lists"></ul>
+          <button class="side-add" id="btn-new-list" title="新建一个播放列表">＋ 新建</button>
+        </div>
+        <div class="pl-main">
+          <ul class="pl-list" id="playlist"></ul>
+          <div class="list-empty" id="list-empty">
+            点击「打开」添加文件或文件夹<br>也可以把文件/文件夹直接拖进来<br>
+            <span class="dim">MP3 / FLAC / WAV / OGG / M4A / AAC</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 歌词秀窗口 ==================== -->
+    <section class="pane" data-pane="lyric">
+      <div class="win-title" data-drag>
+        <span class="t-icon small"></span>
+        <span class="t-name">歌词秀</span>
+        <span class="sysbtns">
+          <button class="sysbtn close" id="ly-close" title="关闭">&#10005;</button>
+        </span>
+      </div>
+      <div class="lyric-body" id="lyric-body">
+        <div class="lyric-hint">未加载歌词</div>
+      </div>
+    </section>
+
+    <!-- ==================== 均衡器窗口 ==================== -->
+    <section class="pane" data-pane="eq">
+      <div class="win-title" data-drag>
+        <span class="t-icon small"></span>
+        <span class="t-name">均衡器</span>
+        <span class="sysbtns">
+          <button class="eqbtn" id="eq-on" title="开启 / 关闭均衡（关闭后直通，便于对比）">ON</button>
+          <button class="eqbtn" id="eq-reset" title="所有频段归零">RESET</button>
+          <button class="eqbtn" id="eq-presets" title="选择音效预设">PRESETS</button>
+          <button class="sysbtn close" id="eq-close" title="关闭">&#10005;</button>
+        </span>
+      </div>
+      <div class="eq-body">
+        <div class="eq-meter" id="eq-meter">
+          <div class="meter-bar"></div><div class="meter-bar"></div><div class="meter-bar"></div>
+          <div class="meter-bar"></div><div class="meter-bar"></div><div class="meter-bar"></div>
+          <div class="meter-bar"></div><div class="meter-bar"></div><div class="meter-bar"></div>
+          <div class="meter-bar"></div><div class="meter-bar"></div><div class="meter-bar"></div>
+          <div class="meter-bar"></div><div class="meter-bar"></div><div class="meter-bar"></div>
+          <div class="meter-bar"></div>
+        </div>
+        <div class="eq-rack">
+          <div class="eq-db"><span>+12</span><span>0</span><span>-12</span></div>
+          <div class="eq-sliders" id="eq-sliders"></div>
+        </div>
+        <div class="eq-freqs">
+          <span class="eq-freq-pad"></span>
+          <span>31</span><span>62</span><span>125</span><span>250</span><span>500</span>
+          <span>1K</span><span>2K</span><span>4K</span><span>8K</span><span>16K</span>
+        </div>
+      </div>
+      <div class="openmenu eqmenu" id="eq-menu" hidden></div>
+    </section>
+
+    <!-- ==================== 关于窗口 ==================== -->
+    <section class="pane abt" data-pane="about">
+      <div class="win-title" data-drag>
+        <span class="t-name">关于 宁宁静听</span>
+        <span class="sysbtns">
+          <button class="sysbtn close" id="abt-close" title="关闭">&#10005;</button>
+        </span>
+      </div>
+
+      <div class="abt-body">
+        <div class="abt-brand">
+          <div class="abt-logo">
+            <i style="height:11px"></i><i style="height:20px"></i><i style="height:15px"></i>
+            <i style="height:7px"></i><i style="height:4px"></i>
+          </div>
+          <div class="abt-btext">
+            <div class="abt-name">宁宁静听</div>
+            <div class="abt-ver">v<span id="abt-ver">0.14.0</span> &middot; <b id="abt-skin">经典紫罗兰</b></div>
+          </div>
+        </div>
+
+        <div class="abt-hr"></div>
+
+        <p class="abt-intro">
+          一款<b>纯本地</b>的桌面音乐播放器。不联网、无广告、不收集任何数据，
+          歌单与设置全部留在你自己的电脑里。支持 MP3 / FLAC / WAV / OGG / M4A 等格式，
+          内置实时频谱与示波可视化、十段均衡器、LRC 逐行歌词和多彩皮肤。
+        </p>
+
+        <div class="abt-kv">
+          <div class="abt-row"><span class="k">作者</span><span class="v">龙哥</span></div>
+          <div class="abt-row"><span class="k">E-MAIL</span><span class="v mail">6040466@qq.com</span></div>
+        </div>
+
+        <div class="abt-foot">
+          <span class="abt-thx">感谢使用 &#9834;</span>
+          <button class="abt-btn" id="abt-ok">确定</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="drop-mask">松开以添加音乐文件</div>
+  </div>
+
+  <!-- 右下角缩放手柄：拖动可按比例放大 / 缩小整套窗口 -->
+  <div class="resize-grip" id="resize-grip" title="拖动缩放界面（整体等比）"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
